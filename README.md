@@ -1,5 +1,7 @@
 ## How to create contract in contract
 
+![Internal Transaction](images/ContractCreation.png)
+
 ```bash
 ❯ yarn deploy
 yarn run v1.22.10
