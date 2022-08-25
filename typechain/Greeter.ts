@@ -7,7 +7,7 @@ import {
   BytesLike,
   CallOverrides,
   ContractTransaction,
-  PayableOverrides,
+  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -16,30 +16,30 @@ import { FunctionFragment, Result } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export interface CreateContractInterface extends utils.Interface {
+export interface GreeterInterface extends utils.Interface {
   functions: {
-    "createGreeterContract()": FunctionFragment;
+    "greet()": FunctionFragment;
+    "setGreeting(string)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "createGreeterContract",
-    values?: undefined
-  ): string;
+  encodeFunctionData(functionFragment: "greet", values?: undefined): string;
+  encodeFunctionData(functionFragment: "setGreeting", values: [string]): string;
 
+  decodeFunctionResult(functionFragment: "greet", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "createGreeterContract",
+    functionFragment: "setGreeting",
     data: BytesLike
   ): Result;
 
   events: {};
 }
 
-export interface CreateContract extends BaseContract {
+export interface Greeter extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: CreateContractInterface;
+  interface: GreeterInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -61,30 +61,44 @@ export interface CreateContract extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    createGreeterContract(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    greet(overrides?: CallOverrides): Promise<[string]>;
+
+    setGreeting(
+      _greeting: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  createGreeterContract(
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  greet(overrides?: CallOverrides): Promise<string>;
+
+  setGreeting(
+    _greeting: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    createGreeterContract(overrides?: CallOverrides): Promise<string>;
+    greet(overrides?: CallOverrides): Promise<string>;
+
+    setGreeting(_greeting: string, overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
-    createGreeterContract(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    greet(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setGreeting(
+      _greeting: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    createGreeterContract(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    greet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setGreeting(
+      _greeting: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }
